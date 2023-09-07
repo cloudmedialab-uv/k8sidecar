@@ -3,6 +3,7 @@ package resources
 import (
 	"context"
 	"encoding/json"
+	"log"
 
 	v1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -15,36 +16,62 @@ import (
 	filterv1 "filter/src/pkg/apis/filtercontroller/v1"
 )
 
+// Api wraps a Kubernetes client to manage custom filter resources.
 type Api struct {
 	client *kubernetes.Clientset
 }
 
+// NewApi initializes and returns a new API instance.
 func NewApi(client *kubernetes.Clientset) *Api {
 	return &Api{
 		client: client,
 	}
 }
 
+// CreateResources creates all required resources for the given filter.
 func (api *Api) CreateResources(filters *filterv1.Filter) error {
-
+	// Extract the filter name and marshal its sidecars to JSON.
 	name := filters.ObjectMeta.Name
 	jFilters, err := json.Marshal(filters.Spec.Sidecars)
+	if err != nil {
+		log.Printf("Failed to marshal sidecars for filter %s: %v", name, err)
+		return err
+	}
+
+	// Generate a certificate for the filter.
+	cert, key, err := gen.GenCert(name)
 	if err != nil {
 		return err
 	}
 
-	cert, key := gen.GenCert(name)
+	// Create the associated resources, logging and collecting errors as needed.
+	if err = api.createDeployment(name, jFilters, cert, key); err != nil {
+		log.Printf("Failed to create deployment for filter %s: %v", name, err)
+		return err
+	}
 
-	err = api.createDeployment(name, jFilters, cert, key)
-	err = api.createService(name)
-	err = api.createKnativeMutatingWebhook(name, cert)
-	err = api.createDeploymentMutatingWebhook(name, cert)
+	if err = api.createService(name); err != nil {
+		log.Printf("Failed to create service for filter %s: %v", name, err)
+		return err
+	}
 
-	return err
+	if err = api.createKnativeMutatingWebhook(name, cert); err != nil {
+		log.Printf("Failed to create Knative mutating webhook for filter %s: %v", name, err)
+		return err
+	}
+
+	if err = api.createDeploymentMutatingWebhook(name, cert); err != nil {
+		log.Printf("Failed to create deployment mutating webhook for filter %s: %v", name, err)
+		return err
+	}
+
+	return nil
 }
 
-func (api *Api) createDeployment(name string, jFilters []byte, cert string, key string) error {
+// createDeployment creates a Kubernetes deployment for the filter.
 
+func (api *Api) createDeployment(name string, jFilters []byte, cert string, key string) error {
+	// Deployment definition
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "filter-deployment-" + name,
@@ -97,13 +124,15 @@ func (api *Api) createDeployment(name string, jFilters []byte, cert string, key 
 			},
 		},
 	}
-
+	// Create the deployment in the cluster.
 	_, err := api.client.AppsV1().Deployments(deployment.Namespace).Create(context.Background(), deployment, metav1.CreateOptions{})
 
 	return err
 }
 
+// createService creates a Kubernetes service for the filter.
 func (api *Api) createService(name string) error {
+	// Service definition for the filter.
 	service := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "service-sidecar-" + name,
@@ -123,12 +152,15 @@ func (api *Api) createService(name string) error {
 		},
 	}
 
+	// Attempt to create the service in the cluster.
 	_, err := api.client.CoreV1().Services("default").Create(context.Background(), service, metav1.CreateOptions{})
 	return err
 }
 
+// createKnativeMutatingWebhook creates a Knative mutating webhook for the filter.
 func (api *Api) createKnativeMutatingWebhook(name string, cert string) error {
 
+	// Define the mutating webhook configuration for Knative.
 	mutatingWebhookConfiguration := &v1.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "filter-mutation-knative." + name,
@@ -160,13 +192,15 @@ func (api *Api) createKnativeMutatingWebhook(name string, cert string) error {
 			},
 		},
 	}
-
+	// Attempt to create the mutating webhook in the cluster.
 	_, err := api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Create(context.Background(), mutatingWebhookConfiguration, metav1.CreateOptions{})
 	return err
 }
 
+// createDeploymentMutatingWebhook creates a deployment mutating webhook for the filter.
 func (api *Api) createDeploymentMutatingWebhook(name string, cert string) error {
 
+	// Define the mutating webhook configuration for deployments.
 	mutatingWebhookConfiguration := &v1.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "filter-mutation-deployment-" + name,
@@ -198,21 +232,38 @@ func (api *Api) createDeploymentMutatingWebhook(name string, cert string) error 
 			},
 		},
 	}
-
+	// Attempt to create the mutating webhook in the cluster.
 	_, err := api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Create(context.Background(), mutatingWebhookConfiguration, metav1.CreateOptions{})
 	return err
 }
 
-func (api *Api) DeleteResources(name string) (err error) {
+// DeleteResources deletes all resources associated with the given filter name.
+func (api *Api) DeleteResources(name string) error {
+	// Delete associated resources, logging and collecting errors as needed.
+	if err := api.deleteDeployment(name); err != nil {
+		log.Printf("Failed to delete deployment for filter %s: %v", name, err)
+		return err
+	}
 
-	err = api.deleteDeployment(name)
-	err = api.deleteService(name)
-	err = api.deleteKnativeMutatingWebhookConfiguration(name)
-	err = api.deleteDeploymentMutatingWebhookConfiguration(name)
+	if err := api.deleteService(name); err != nil {
+		log.Printf("Failed to delete service for filter %s: %v", name, err)
+		return err
+	}
 
-	return err
+	if err := api.deleteKnativeMutatingWebhookConfiguration(name); err != nil {
+		log.Printf("Failed to delete Knative mutating webhook configuration for filter %s: %v", name, err)
+		return err
+	}
+
+	if err := api.deleteDeploymentMutatingWebhookConfiguration(name); err != nil {
+		log.Printf("Failed to delete deployment mutating webhook configuration for filter %s: %v", name, err)
+		return err
+	}
+
+	return nil
 }
 
+// deleteDeployment deletes the Kubernetes deployment associated with the filter.
 func (api *Api) deleteDeployment(name string) error {
 	deletePolicy := metav1.DeletePropagationForeground
 	return api.client.AppsV1().Deployments("default").Delete(context.Background(), "filter-deployment-"+name, metav1.DeleteOptions{
@@ -220,14 +271,17 @@ func (api *Api) deleteDeployment(name string) error {
 	})
 }
 
+// deleteService deletes the Kubernetes service associated with the filter.
 func (api *Api) deleteService(name string) error {
 	return api.client.CoreV1().Services("default").Delete(context.Background(), "service-sidecar-"+name, metav1.DeleteOptions{})
 }
 
+// deleteKnativeMutatingWebhookConfiguration deletes the Knative mutating webhook configuration associated with the filter.
 func (api *Api) deleteKnativeMutatingWebhookConfiguration(name string) error {
 	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-"+name, metav1.DeleteOptions{})
 }
 
+// deleteDeploymentMutatingWebhookConfiguration deletes the deployment mutating webhook configuration associated with the filter.
 func (api *Api) deleteDeploymentMutatingWebhookConfiguration(name string) error {
 	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-"+name, metav1.DeleteOptions{})
 }

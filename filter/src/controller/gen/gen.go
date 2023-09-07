@@ -8,20 +8,25 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"log"
 	"math/big"
 	"time"
 )
 
-func GenCert(name string) (string, string) {
-
+// GenCert generates an ECDSA certificate for a given name and returns its PEM-encoded representation
+// alongside the PEM-encoded private key.
+func GenCert(name string) (string, string, error) {
+	// Generate a DNS name based on the provided name
 	dnsName := "service-sidecar-" + name + ".default.svc"
 
+	// Generate ECDSA private key
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
-		panic(err)
+		log.Printf("Error generating ECDSA private key: %v", err)
+		return "", "", err
 	}
 
-	// Crear un modelo para nuestro certificado
+	// Create a template for our certificate
 	template := &x509.Certificate{
 		SerialNumber: big.NewInt(1),
 		Subject: pkix.Name{
@@ -35,32 +40,33 @@ func GenCert(name string) (string, string) {
 		DNSNames:              []string{dnsName},
 	}
 
-	// Crear el certificado
+	// Create the certificate
 	derBytes, err := x509.CreateCertificate(rand.Reader, template, template, &privateKey.PublicKey, privateKey)
 	if err != nil {
-		panic(err)
+		log.Printf("Error creating the certificate: %v", err)
+		return "", "", err
 	}
 
-	// Crear buffers de bytes para almacenar la clave y el certificado en formato PEM
+	// Create byte buffers to store the PEM-encoded key and certificate
 	certBuffer := new(bytes.Buffer)
 	keyBuffer := new(bytes.Buffer)
 
-	// Guardar el certificado en la variable PEM.
+	// Save the certificate in PEM format
 	if err := pem.Encode(certBuffer, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes}); err != nil {
-		panic(err)
+		log.Printf("Error encoding the certificate in PEM format: %v", err)
+		return "", "", err
 	}
 
-	// Guardar la clave privada en la variable PEM.
+	// Save the private key in PEM format
 	privBytes, err := x509.MarshalPKCS8PrivateKey(privateKey)
 	if err != nil {
-		panic(err)
+		log.Printf("Error marshaling the private key: %v", err)
+		return "", "", err
 	}
 	if err := pem.Encode(keyBuffer, &pem.Block{Type: "PRIVATE KEY", Bytes: privBytes}); err != nil {
-		panic(err)
+		log.Printf("Error encoding the private key in PEM format: %v", err)
+		return "", "", err
 	}
 
-	cert := certBuffer.String()
-	key := keyBuffer.String()
-
-	return cert, key
+	return certBuffer.String(), keyBuffer.String(), nil
 }
