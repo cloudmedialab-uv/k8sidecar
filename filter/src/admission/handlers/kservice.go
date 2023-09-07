@@ -69,7 +69,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		for i := range baseContainers {
-			pport := basePort + int32(i) - int32(len(baseContainers))
+			pport := basePort + int32(i+1) - int32(len(baseContainers))
 			setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
 			addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
 
@@ -138,7 +138,7 @@ func getPPriority(envs []corev1.EnvVar) int {
 			return value
 		}
 	}
-	return 0
+	return -1
 }
 
 func setEnvVar(envs *[]corev1.EnvVar, key, value string) {

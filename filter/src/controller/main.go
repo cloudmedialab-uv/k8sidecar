@@ -10,6 +10,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/workqueue"
 
+	"filter/src/controller/config"
 	"filter/src/controller/resources"
 	watcher "filter/src/controller/watcher"
 
@@ -18,6 +19,10 @@ import (
 )
 
 func main() {
+	// Load Admission image env
+	conf := config.NewIntance()
+	conf.Load("ADMISSION_IMAGE", "")
+
 	// Set up the kubeconfig for connecting to a Kubernetes cluster.
 	kubeconfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		clientcmd.NewDefaultClientConfigLoadingRules(),

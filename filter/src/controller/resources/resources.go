@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 
+	"filter/src/controller/config"
 	"filter/src/controller/gen"
 	filterv1 "filter/src/pkg/apis/filtercontroller/v1"
 )
@@ -19,12 +20,15 @@ import (
 // Api wraps a Kubernetes client to manage custom filter resources.
 type Api struct {
 	client *kubernetes.Clientset
+	conf   *config.Config
 }
 
 // NewApi initializes and returns a new API instance.
 func NewApi(client *kubernetes.Clientset) *Api {
+
 	return &Api{
 		client: client,
+		conf:   config.NewIntance(),
 	}
 }
 
@@ -94,7 +98,7 @@ func (api *Api) createDeployment(name string, jFilters []byte, cert string, key 
 					Containers: []corev1.Container{
 						{
 							Name:  "admssion-server",
-							Image: "routerdi1315.uv.es:33443/sidecar/filter/admission:1.7.test",
+							Image: api.conf.Get("ADMISSION_IMAGE"),
 							Env: []corev1.EnvVar{
 								{
 									Name:  "FILTERS",
@@ -163,7 +167,7 @@ func (api *Api) createKnativeMutatingWebhook(name string, cert string) error {
 	// Define the mutating webhook configuration for Knative.
 	mutatingWebhookConfiguration := &v1.MutatingWebhookConfiguration{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "filter-mutation-knative." + name,
+			Name: "filter-mutation-knative-" + name,
 		},
 		Webhooks: []v1.MutatingWebhook{
 			{
@@ -278,10 +282,10 @@ func (api *Api) deleteService(name string) error {
 
 // deleteKnativeMutatingWebhookConfiguration deletes the Knative mutating webhook configuration associated with the filter.
 func (api *Api) deleteKnativeMutatingWebhookConfiguration(name string) error {
-	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-"+name, metav1.DeleteOptions{})
+	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-knative-"+name, metav1.DeleteOptions{})
 }
 
 // deleteDeploymentMutatingWebhookConfiguration deletes the deployment mutating webhook configuration associated with the filter.
 func (api *Api) deleteDeploymentMutatingWebhookConfiguration(name string) error {
-	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-"+name, metav1.DeleteOptions{})
+	return api.client.AdmissionregistrationV1().MutatingWebhookConfigurations().Delete(context.Background(), "filter-mutation-deployment-"+name, metav1.DeleteOptions{})
 }
