@@ -1,0 +1,95 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: filters.filtercontroller.ks.io
+spec:
+  group: filtercontroller.ks.io
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                sidecars:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      image:
+                        type: string
+                      name:
+                        type: string
+                      priority:
+                        type: integer
+                        format: int8
+                        nullable: true
+                      env:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            value:
+                              type: string
+  scope: Namespaced
+  names:
+    plural: filters
+    singular: filter
+    kind: Filter
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filter-controller-sa
+imagePullSecrets:
+  - name: routerdi-registry-creds
+---
+#//TODO: insecure
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filter-controller-rol
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filter-controller-rb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole  
+  name: filter-controller-rol
+subjects:
+- kind: ServiceAccount
+  namespace: default
+  name: filter-controller-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filter-controller-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filter-controller
+  template:
+    metadata:
+      labels:
+        app: filter-controller
+    spec:
+      serviceAccountName: filter-controller-sa
+      containers:
+      - name: filter-controller
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.7.test
+        ports:
+        - containerPort: 8080

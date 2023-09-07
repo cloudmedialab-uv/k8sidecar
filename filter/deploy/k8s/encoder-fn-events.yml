@@ -1,0 +1,32 @@
+kind: Service
+apiVersion: serving.knative.dev/v1
+metadata:
+  name: ffmpeg-function-noacc
+  labels:
+    e1: "sidecar"
+    e2: "sidecar"
+spec:
+  template:
+    metadata:
+      name: ffmpeg-function-noacc-v2
+      annotations:
+         autoscaling.knative.dev/metric: "concurrency"
+         autoscaling.knative.dev/target: "1"
+         autoscaling.knative.dev/minScale: "1"
+         autoscaling.knative.dev/maxScale: "1"
+         autoscaling.knative.dev/target-utilization-percentage: "100"
+    spec:
+      containerConcurrency: 1
+      containers:
+        - image: routerdi1315.uv.es:33443/video-coding/ffmpeg-function-noacc:3.0
+          env:
+            - name: SERVICE_PORT
+              value: "8080"
+            - name: SERVICE_PATH
+              value: "/ffmpeg-function"
+            - name: HEALTH_PATH
+              value: "/health"
+            - name: METRICS_PATH
+              value: "/metrics"
+            - name: LOG_LEVEL
+              value: "DEBUG"

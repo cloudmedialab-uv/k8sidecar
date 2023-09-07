@@ -1,0 +1,12 @@
+apiVersion: filtercontroller.ks.io/v1
+kind: Filter
+metadata:
+  name: e1
+spec:
+  sidecars:
+    - image: "routerdi1315.uv.es:33443/video-coding/events-sidecar:1.0"
+      name: "event"
+      priority: 10
+    - image: "routerdi1315.uv.es:33443/video-coding/middleware-sidecar:latest"
+      name: "middleware"
+      priority: 2

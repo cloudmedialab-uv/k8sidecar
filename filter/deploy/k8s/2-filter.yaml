@@ -1,0 +1,9 @@
+apiVersion: filtercontroller.ks.io/v1
+kind: Filter
+metadata:
+  name: e2
+spec:
+  sidecars:
+    - image: "routerdi1315.uv.es:33443/video-coding/middleware-sidecar:latest"
+      name: "middleware2"
+      priority: 5
