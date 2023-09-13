@@ -90,6 +90,9 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.7.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.8.0.test
+        env:
+          - name: ADMISSION_IMAGE
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.8.0.test
         ports:
         - containerPort: 8080
