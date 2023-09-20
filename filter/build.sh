@@ -1,5 +1,5 @@
 
-TAG="1.8.0.test"
+TAG="1.9.0.test"
 
 docker build . -t sidecar/filter/controller:$TAG -f deploy/docker/controller/Dockerfile
 

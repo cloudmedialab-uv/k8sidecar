@@ -44,13 +44,19 @@ spec:
     kind: Filter
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: filter-namespace
+  labels:
+    eventing.knative.dev/injection: enabled
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filter-controller-sa
 imagePullSecrets:
   - name: routerdi-registry-creds
 ---
-#//TODO: insecure
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -70,13 +76,14 @@ roleRef:
   name: filter-controller-rol
 subjects:
 - kind: ServiceAccount
-  namespace: default
+  namespace: filter-namespace
   name: filter-controller-sa
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: filter-controller-deployment
+  namespace: filter-namespace
 spec:
   replicas: 1
   selector:
@@ -90,9 +97,9 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.8.0.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.0.test
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.8.0.test
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.0.test
         ports:
         - containerPort: 8080
