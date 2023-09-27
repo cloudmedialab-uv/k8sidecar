@@ -36,9 +36,7 @@ To build the sources, you have two options: you can do it manually or use the im
 If you choose to compile the images manually, run the `build.sh` script provided in the repository:
 
 ```bash
-cd filter
-
-./build.sh
+bash filter/build.sh
 ```
 
 This script will compile the necessary Docker images for the application and properly tag them for later use.
@@ -50,9 +48,7 @@ If you prefer to use the available precompiled images, simply proceed with the d
 To deploy the application on your Kubernetes cluster, you can use the `start.sh ` script included in the repository:
 
 ```bash
-cd filter
-
-./start.sh
+bash filter/start.sh
 ```
 
 This script automates the deployment process, applying the necessary Kubernetes configurations to install and run the application on your cluster. Ensure you have the appropriate credentials configured and are authenticated in your cluster before running the script. In case you are using Minikube, ensure that the cluster is running with `minikube start`.
