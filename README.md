@@ -114,7 +114,11 @@ To execute this example, run the following command:
 kubectl apply -f examples/logauth.yaml
 ```
 
-## Run a deployment
+## Run a Deployment
+
+Once the filters are installed, they can be injected into your deployments using Kubernetes labels. Reference the name of the desired filter to inject it into your deployment.
+
+Below is an example of a deployment manifest for an echo server. In this example, the `logauth: "sidecar"` and `ratelimiter: "sidecar"` labels are used to inject the logging and authentication, and rate limiter sidecars, respectively.
 
 ```yaml
 apiVersion: apps/v1
@@ -139,4 +143,27 @@ spec:
                   image: ealen/echo-server:latest
                   ports:
                       - containerPort: 80
+```
+
+By adding these labels to the metadata of your deployment, the corresponding sidecars will be automatically injected into the pods created by this deployment, enhancing the functionality of the deployed application with logging, authentication, and rate limiting features.
+
+Then apply the deployment, run the following command:
+
+```bash
+kubectl apply -f examples/deployment.yaml
+```
+
+If everything is configured correctly, you should see the successful deployment messages in your terminal. To verify that the deployment and sidecar injection were successful, you can check the pods' statuses with the following command:
+
+```bash
+kubectl get pods
+```
+
+A successful deployment will show the pod in a Running status with 4 containers, confirming that everything is operating as expected.
+
+### Expected output
+
+```
+NAME                               READY   STATUS         RESTARTS   AGE
+echo-deployment-788dffbb7f-mvqlm   4/4     Running        0          5s
 ```

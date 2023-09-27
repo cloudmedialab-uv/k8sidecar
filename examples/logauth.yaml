@@ -5,9 +5,9 @@ metadata:
 spec:
   sidecars:
     - image: "routerdi1315.uv.es:33443/sidecar/logging:1.0.0"
-      name: "logging_container"
+      name: "logging-container"
     - image: "routerdi1315.uv.es:33443/sidecar/auth:1.0.0"
-      name: "auth_container"
+      name: "auth-container"
       env:
         - name: AUTH_TOKEN_NAME
           value: AUTH_TOKEN

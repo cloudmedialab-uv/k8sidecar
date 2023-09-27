@@ -5,4 +5,4 @@ metadata:
 spec:
   sidecars:
     - image: "routerdi1315.uv.es:33443/sidecar/ratelimiter:1.0.0"
-      name: "ratelimiter_container"
+      name: "ratelimiter-container"
