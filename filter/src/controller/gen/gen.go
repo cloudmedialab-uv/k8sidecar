@@ -15,9 +15,9 @@ import (
 
 // GenCert generates an ECDSA certificate for a given name and returns its PEM-encoded representation
 // alongside the PEM-encoded private key.
-func GenCert(name string) (string, string, error) {
+func GenCert(name string, namespace string) (string, string, error) {
 	// Generate a DNS name based on the provided name
-	dnsName := "service-sidecar-" + name + ".default.svc"
+	dnsName := "service-sidecar-" + name + "." + namespace + ".svc"
 
 	// Generate ECDSA private key
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)

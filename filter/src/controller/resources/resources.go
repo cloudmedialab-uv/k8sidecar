@@ -43,7 +43,7 @@ func (api *Api) CreateResources(filters *filterv1.Filter) error {
 	}
 
 	// Generate a certificate for the filter.
-	cert, key, err := gen.GenCert(name)
+	cert, key, err := gen.GenCert(name, api.conf.Get("FILTER_NAMESPACE"))
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (api *Api) createDeployment(name string, jFilters []byte, cert string, key 
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "filter-deployment-" + name,
-			Namespace: "filter-namespace",
+			Namespace: api.conf.Get("FILTER_NAMESPACE"),
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: func() *int32 { i := int32(1); return &i }(),
@@ -139,7 +139,7 @@ func (api *Api) createService(name string) error {
 	service := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "service-sidecar-" + name,
-			Namespace: "filter-namespace",
+			Namespace: api.conf.Get("FILTER_NAMESPACE"),
 		},
 		Spec: corev1.ServiceSpec{
 			Selector: map[string]string{
@@ -156,7 +156,7 @@ func (api *Api) createService(name string) error {
 	}
 
 	// Attempt to create the service in the cluster.
-	_, err := api.client.CoreV1().Services("filter-namespace").Create(context.Background(), service, metav1.CreateOptions{})
+	_, err := api.client.CoreV1().Services(api.conf.Get("FILTER_NAMESPACE")).Create(context.Background(), service, metav1.CreateOptions{})
 	return err
 }
 
@@ -184,7 +184,7 @@ func (api *Api) createKnativeMutatingWebhook(name string, cert string) error {
 				},
 				ClientConfig: v1.WebhookClientConfig{
 					Service: &v1.ServiceReference{
-						Namespace: "filter-namespace",
+						Namespace: api.conf.Get("FILTER_NAMESPACE"),
 						Name:      "service-sidecar-" + name,
 						Path:      &[]string{"/kservice"}[0],
 					},
@@ -224,7 +224,7 @@ func (api *Api) createDeploymentMutatingWebhook(name string, cert string) error 
 				},
 				ClientConfig: v1.WebhookClientConfig{
 					Service: &v1.ServiceReference{
-						Namespace: "filter-namespace",
+						Namespace: api.conf.Get("FILTER_NAMESPACE"),
 						Name:      "service-sidecar-" + name,
 						Path:      &[]string{"/deployment"}[0],
 					},
@@ -269,14 +269,14 @@ func (api *Api) DeleteResources(name string) error {
 // deleteDeployment deletes the Kubernetes deployment associated with the filter.
 func (api *Api) deleteDeployment(name string) error {
 	deletePolicy := metav1.DeletePropagationForeground
-	return api.client.AppsV1().Deployments("filter-namespace").Delete(context.Background(), "filter-deployment-"+name, metav1.DeleteOptions{
+	return api.client.AppsV1().Deployments(api.conf.Get("FILTER_NAMESPACE")).Delete(context.Background(), "filter-deployment-"+name, metav1.DeleteOptions{
 		PropagationPolicy: &deletePolicy,
 	})
 }
 
 // deleteService deletes the Kubernetes service associated with the filter.
 func (api *Api) deleteService(name string) error {
-	return api.client.CoreV1().Services("filter-namespace").Delete(context.Background(), "service-sidecar-"+name, metav1.DeleteOptions{})
+	return api.client.CoreV1().Services(api.conf.Get("FILTER_NAMESPACE")).Delete(context.Background(), "service-sidecar-"+name, metav1.DeleteOptions{})
 }
 
 // deleteKnativeMutatingWebhookConfiguration deletes the Knative mutating webhook configuration associated with the filter.

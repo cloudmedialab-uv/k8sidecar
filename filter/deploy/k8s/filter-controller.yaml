@@ -54,6 +54,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filter-controller-sa
+  namespace: filter-namespace
 imagePullSecrets:
   - name: routerdi-registry-creds
 ---
@@ -97,9 +98,11 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.0.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.2.test
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.0.test
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.2.test
+          - name: FILTER_NAMESPACE
+            value: filter-namespace
         ports:
         - containerPort: 8080

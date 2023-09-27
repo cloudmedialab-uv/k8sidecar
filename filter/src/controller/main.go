@@ -22,6 +22,7 @@ func main() {
 	// Load Admission image env
 	conf := config.NewIntance()
 	conf.Load("ADMISSION_IMAGE", "")
+	conf.Load("FILTER_NAMESPACE", "filter-namespace")
 
 	// Set up the kubeconfig for connecting to a Kubernetes cluster.
 	kubeconfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
