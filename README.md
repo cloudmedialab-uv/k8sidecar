@@ -4,7 +4,7 @@ Brief description of your application.
 
 ## Prerequisites
 
--   [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+-   [Minikube](https://minikube.sigs.k8s.io/docs/start/) or your custom cluster
 -   [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 -   [Docker](https://www.docker.com/products/docker-desktop)
 
