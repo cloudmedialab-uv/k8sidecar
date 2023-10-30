@@ -94,6 +94,7 @@ func (api *Api) createDeployment(name string, jFilters []byte, cert string, key 
 					},
 				},
 				Spec: corev1.PodSpec{
+					ServiceAccountName: "filter-controller-sa",
 					Containers: []corev1.Container{
 						{
 							Name:  "admssion-server",

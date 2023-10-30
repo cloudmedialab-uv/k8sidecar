@@ -47,13 +47,24 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: filter-namespace
-  labels:
-    eventing.knative.dev/injection: enabled
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJyb3V0ZXJkaTEzMTUudXYuZXM6MzM0NDMiOnsidXNlcm5hbWUiOiJjbG91ZGxhYiIsInBhc3N3b3JkIjoicmVnaXN0cm8iLCJhdXRoIjoiWTJ4dmRXUnNZV0k2Y21WbmFYTjBjbTg9In19fQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2022-03-15T10:02:25Z"
+  name: routerdi-registry-creds
+  namespace: metrics
+  resourceVersion: "2374187"
+  uid: 843b9688-48c8-4ad8-84a5-27925519350c
+type: kubernetes.io/dockerconfigjson
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filter-controller-sa
+  namespace: filter-namespace
 imagePullSecrets:
   - name: routerdi-registry-creds
 ---
@@ -69,7 +80,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: filter-controller-rb
+  name: filter-controller-crb
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole  
@@ -97,9 +108,9 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.0.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.2.test
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.0.test
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.2.test
         ports:
         - containerPort: 8080
