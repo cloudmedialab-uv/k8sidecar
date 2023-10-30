@@ -8,7 +8,11 @@ docker build $SCRIPT_DIR -t sidecar/filter/controller:$TAG -f $SCRIPT_DIR/deploy
 
 docker tag sidecar/filter/controller:$TAG routerdi1315.uv.es:33443/sidecar/filter/controller:$TAG
 
+docker push routerdi1315.uv.es:33443/sidecar/filter/controller:$TAG
+
 
 docker build $SCRIPT_DIR -t sidecar/filter/admission:$TAG -f $SCRIPT_DIR/deploy/docker/admission/Dockerfile
 
 docker tag sidecar/filter/admission:$TAG routerdi1315.uv.es:33443/sidecar/filter/admission:$TAG
+
+docker push routerdi1315.uv.es:33443/sidecar/filter/admission:$TAG
