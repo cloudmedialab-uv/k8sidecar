@@ -49,24 +49,10 @@ metadata:
   name: filter-namespace
 ---
 apiVersion: v1
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJyb3V0ZXJkaTEzMTUudXYuZXM6MzM0NDMiOnsidXNlcm5hbWUiOiJjbG91ZGxhYiIsInBhc3N3b3JkIjoicmVnaXN0cm8iLCJhdXRoIjoiWTJ4dmRXUnNZV0k2Y21WbmFYTjBjbTg9In19fQ==
-kind: Secret
-metadata:
-  creationTimestamp: "2022-03-15T10:02:25Z"
-  name: routerdi-registry-creds
-  namespace: metrics
-  resourceVersion: "2374187"
-  uid: 843b9688-48c8-4ad8-84a5-27925519350c
-type: kubernetes.io/dockerconfigjson
----
-apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filter-controller-sa
   namespace: filter-namespace
-imagePullSecrets:
-  - name: routerdi-registry-creds
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -105,7 +91,6 @@ spec:
       labels:
         app: filter-controller
     spec:
-      serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
         image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.2.test
