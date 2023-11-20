@@ -91,6 +91,7 @@ spec:
       labels:
         app: filter-controller
     spec:
+      serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
         image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.2.test

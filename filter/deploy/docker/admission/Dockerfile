@@ -1,6 +1,6 @@
 FROM golang:alpine AS build
 WORKDIR /app
-COPY src .
+COPY . .
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main admission/main.go
 

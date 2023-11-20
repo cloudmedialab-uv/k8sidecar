@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG="1.9.4.test"
+TAG="1.9.5.test"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -9,7 +9,6 @@ docker build $SCRIPT_DIR -t sidecar/filter/controller:$TAG -f $SCRIPT_DIR/deploy
 docker tag sidecar/filter/controller:$TAG routerdi1315.uv.es:33443/sidecar/filter/controller:$TAG
 
 docker push routerdi1315.uv.es:33443/sidecar/filter/controller:$TAG
-
 
 docker build $SCRIPT_DIR -t sidecar/filter/admission:$TAG -f $SCRIPT_DIR/deploy/docker/admission/Dockerfile
 
