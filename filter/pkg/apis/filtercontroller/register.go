@@ -18,5 +18,5 @@ package filtercontroller
 
 // GroupName is the group name used in this package
 const (
-	GroupName = "filtercontroller.ks.io"
+	GroupName = "k8sidecar.io"
 )

@@ -1,9 +1,9 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: filters.filtercontroller.ks.io
+  name: filters.k8sidecar.io
 spec:
-  group: filtercontroller.ks.io
+  group: k8sidecar.io
   versions:
     - name: v1
       served: true
@@ -94,10 +94,10 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.2.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.6.test
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.2.test
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.6.test
           - name: FILTER_NAMESPACE
             value: filter-namespace
         ports:

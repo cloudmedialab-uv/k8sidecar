@@ -21,7 +21,7 @@ import (
 func main() {
 	// Load Admission image env
 	conf := config.NewIntance()
-	conf.Load("FILTERS", "")
+
 	conf.Load("ADMISSION_IMAGE", "")
 	conf.Load("MEDIUM", "Memory")
 	conf.Load("FILTER_NAMESPACE", "filter-namespace")

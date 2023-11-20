@@ -21,7 +21,7 @@ import (
 func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 	config := config.NewIntance()
 
-	log.Println("Received a request to handle Kservice")
+	log.Println("Received a request to handle deployments")
 
 	admissionReview := admissionv1.AdmissionReview{}
 	err := json.NewDecoder(r.Body).Decode(&admissionReview)

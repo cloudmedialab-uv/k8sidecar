@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: echo-deployment
   labels: 
-    logauth: "sidecar" # inject logging and auth sidecars
+    #logauth: "sidecar" # inject logging and auth sidecars
     ratelimiter: "sidecar" # inject ratelimiter sidecar
 spec:
   replicas: 1

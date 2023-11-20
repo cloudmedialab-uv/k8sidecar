@@ -1,4 +1,4 @@
-apiVersion: filtercontroller.ks.io/v1
+apiVersion: k8sidecar.io/v1
 kind: Filter
 metadata:
   name: logauth

@@ -1,8 +1,16 @@
-apiVersion: filtercontroller.ks.io/v1
+#apiVersion: k8sidecar.io/v1
+#kind: Filter
+#metadata:
+#  name: ratelimiter
+#spec:
+#  sidecars:
+#    - image: "routerdi1315.uv.es:33443/sidecar/ratelimiter:1.0.0"
+#      name: "ratelimiter-container"
+apiVersion: k8sidecar.io/v1
 kind: Filter
 metadata:
   name: ratelimiter
 spec:
   sidecars:
-    - image: "routerdi1315.uv.es:33443/sidecar/ratelimiter:1.0.0"
+    - image: "routerdi1315.uv.es:33443/sidecar/datamesh-sidecar:2.0.6"
       name: "ratelimiter-container"

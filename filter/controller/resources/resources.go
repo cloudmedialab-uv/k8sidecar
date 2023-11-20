@@ -100,7 +100,7 @@ func (api *Api) createDeployment(name string, jFilters []byte, cert string, key 
 									Value: string(jFilters),
 								},
 								{
-									Name:  "LABEL",
+									Name:  "LABEL_KEY",
 									Value: name,
 								},
 								{
