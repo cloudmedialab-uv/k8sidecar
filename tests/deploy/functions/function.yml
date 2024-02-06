@@ -1,0 +1,55 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: trigger
+  annotations:
+     description: "Trigger used to send events"
+spec:
+  broker: video-coding-broker
+  filter:
+    attributes:
+
+      type: encoder
+  subscriber:
+    ref:
+     apiVersion: serving.knative.dev/v1
+     kind: Service
+     name: ffmpeg-fn
+    uri: /ffmpeg-fn
+---
+kind: Service
+apiVersion: serving.knative.dev/v1
+metadata:
+  name: ffmpeg-fn
+  labels:
+    datamesh: "sidecar"
+spec:
+  template:
+    metadata:
+      name: ffmpeg-fn-v2
+      annotations:
+         autoscaling.knative.dev/metric: "concurrency"
+         autoscaling.knative.dev/target: "$CONCURRENCY"
+         autoscaling.knative.dev/minScale: "$MIN_REPLICAS"
+         autoscaling.knative.dev/maxScale: "$MAX_REPLICAS"
+         autoscaling.knative.dev/target-utilization-percentage: "100"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - worker9-k8s-gpu
+                - worker10-k8s-gpu
+                - worker11-k8s-gpu
+                - worker12-k8s-gpu
+                - worker13-k8s-gpu-fat
+      containerConcurrency: $CONCURRENCY
+      containers:
+        - image: mendhak/http-https-echo
+          env:
+            - name: HTTP_PORT
+              value: "8080"

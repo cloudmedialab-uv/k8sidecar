@@ -1,0 +1,22 @@
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: $NAMESPACE
+#  labels:
+#    eventing.knative.dev/injection: enabled
+#---
+apiVersion:  v1
+kind:  ConfigMap
+metadata:
+  name:  config-defaults
+  namespace:  knative-serving
+data:
+  revision-timeout-seconds: "3600"
+  max-revision-timeout-seconds: "7200"
+  scale-to-zero-grace-period: "$SCALE_TO_ZERO_GRACE_PERIOD"
+---
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+ name: video-coding-broker
+ namespace: $NAMESPACE

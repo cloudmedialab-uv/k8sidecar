@@ -49,10 +49,21 @@ metadata:
   name: filter-namespace
 ---
 apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJyb3V0ZXJkaTEzMTUudXYuZXM6MzM0NDMiOnsidXNlcm5hbWUiOiJjbG91ZGxhYiIsInBhc3N3b3JkIjoicmVnaXN0cm8iLCJhdXRoIjoiWTJ4dmRXUnNZV0k2Y21WbmFYTjBjbTg9In19fQ==
+kind: Secret
+metadata:
+  name: routerdi-registry-creds
+  namespace: filter-namespace
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filter-controller-sa
   namespace: filter-namespace
+imagePullSecrets:
+  - name: routerdi-registry-creds
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -73,8 +84,8 @@ roleRef:
   name: filter-controller-rol
 subjects:
 - kind: ServiceAccount
-  namespace: filter-namespace
   name: filter-controller-sa
+  namespace: filter-namespace
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -100,5 +111,7 @@ spec:
             value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.8.test
           - name: FILTER_NAMESPACE
             value: filter-namespace
+          - name: MEDIUM
+            value: ""
         ports:
         - containerPort: 8080
