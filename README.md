@@ -25,8 +25,8 @@ minikube start
 ### 3. Clone the Repository
 
 ```bash
-git clone https://github.com/tu-usuario/tu-repositorio.git
-cd tu-repositorio
+git clone https://github.com/cloudmedialab-uv/k8sidecar.git
+cd k8sidecar
 ```
 
 ### 4. Build the Sources
@@ -55,11 +55,11 @@ This script automates the deployment process, applying the necessary Kubernetes 
 
 ## Run Examples
 
-In this section, we will use example images created with the Java and Go client libraries. You can find references to both libraries in their respective GitHub repositories ([Java Client Library](https://github.com/your-username/java-client-library), [Go Client Library](https://github.com/your-username/go-client-library)).
+In this section, we will use example images created with the Java and Go client libraries. You can find references to both libraries in their respective GitHub repositories ([Java Client Library](https://github.com/cloudmedialab-uv/k8sidecar-java-lib), [Go Client Library](https://github.com/cloudmedialab-uv/k8sidecar-go-lib)).
 
 ### Example 1
 
-In the first example, we will use a filter created with the Go library that acts as a rate limiter. You can find the reference to this example [here](https://github.com/your-username/ratelimiter-example).
+In the first example, we will use a filter created with the Go library that acts as a rate limiter. You can find the reference to this example [here](https://github.com/cloudmedialab-uv/k8sidecar-go-lib/tree/main/examples/ratelimiter).
 
 Below is the YAML file description for the Go filter which will be installed in Kubernetes. This file is located in the `examples` folder of the repository.
 
@@ -82,7 +82,7 @@ kubectl apply -f examples/ratelimiter.yaml
 
 ### Example 2
 
-The second example consists of two images written with the Java library, which act as authentication and logging request filters. References to these codes can be found [here for authentication](https://github.com/your-username/auuth-example) and [here for logging](https://github.com/your-username/log-example).
+The second example consists of two images written with the Java library, which act as authentication and logging request filters. References to these codes can be found [here for authentication](https://github.com/your-username/auuth-example) and [here for logging](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/logging).
 
 Below is the YAML file description for the Java filters, which will also be installed in Kubernetes:
 
