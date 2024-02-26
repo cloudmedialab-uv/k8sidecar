@@ -51,7 +51,15 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		basePort := int32(8080)
+		basePort64, err := strconv.ParseInt(deployment.Annotations["k8sidecar.port"], 10, 32)
+
+		var basePort int32
+		if err != nil {
+			basePort = int32(8080)
+		} else {
+			basePort = int32(basePort64)
+		}
+
 		baseContainers := mDeployment.Spec.Template.Spec.Containers
 
 		for _, obj := range objs {
@@ -71,7 +79,7 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		for i := range baseContainers {
-			pport := basePort + int32(i) - int32(len(baseContainers))
+			pport := basePort + int32(i)
 			setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
 			addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
 

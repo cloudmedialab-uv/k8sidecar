@@ -61,7 +61,14 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Initialize a base port with the value 8080.
-		basePort := int32(8080)
+		basePort64, err := strconv.ParseInt(knativeService.Annotations["k8sidecar.port"], 10, 32)
+
+		var basePort int32
+		if err != nil {
+			basePort = int32(8080)
+		} else {
+			basePort = int32(basePort64)
+		}
 
 		// Get a deep copy of the current containers from the modified Knative service.
 		baseContainers := mknativeService.Spec.Template.Spec.Containers
@@ -90,7 +97,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		// Iterate through each container in the base containers.
 		for i := range baseContainers {
 			// Calculate a dynamic port based on the container's position.
-			pport := basePort + int32(i+1) - int32(len(baseContainers))
+			pport := basePort + int32(i+1)
 			// Set an environment variable for the calculated port.
 			setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
 			// Ensure a shared volume exists for this container.
