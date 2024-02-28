@@ -21,7 +21,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // MyResource is a specification for a MyResource resource
@@ -34,23 +33,15 @@ type Filter struct {
 
 // FilterSpec is the spec for a Filter resource
 type FilterSpec struct {
-	Sidecars []Object `json:"sidecars"`
+	Sidecars []Sidecar       `json:"sidecars"`
+	Volumes  []corev1.Volume `json:"volumes"`
 }
 
 // Object represents a single object in the array
-type Object struct {
-	Image    string          `json:"image"`
-	Name     string          `json:"name,omitempty"`
-	Priority int8            `json:"priority,omitempty"`
-	Env      []corev1.EnvVar `json:"env,omitempty"`
-}
-
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
-// FilterList is a list of Filter resources
-type FilterList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata"`
-
-	Items []Filter `json:"items"`
+type Sidecar struct {
+	Image       string               `json:"image"`
+	Name        string               `json:"name,omitempty"`
+	Priority    int8                 `json:"priority,omitempty"`
+	Env         []corev1.EnvVar      `json:"env,omitempty"`
+	VolumeMount []corev1.VolumeMount `json:"volumeMount,omitempty"`
 }

@@ -43,7 +43,7 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("adding sidecar container")
 
 		jsonStr := config.Get("FILTERS")
-		var objs []filterv1.Object
+		var objs []filterv1.Sidecar
 
 		err := json.Unmarshal([]byte(jsonStr), &objs)
 		if err != nil {
@@ -51,16 +51,15 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		basePort64, err := strconv.ParseInt(deployment.Annotations["k8sidecar.port"], 10, 32)
-
-		var basePort int32
-		if err != nil {
-			basePort = int32(8080)
-		} else {
-			basePort = int32(basePort64)
+		baseContainers := mDeployment.Spec.Template.Spec.Containers
+		baseContainer := &baseContainers[len(baseContainers)-1].Env
+		basePortTag, ok := mDeployment.Annotations["k8sidecar.port"]
+		if !ok {
+			basePortTag = "PORT"
 		}
 
-		baseContainers := mDeployment.Spec.Template.Spec.Containers
+		basePort := getEnvPort(*baseContainer, basePortTag)
+		addVolume := getEnvSharedVolume(*baseContainer, mDeployment.Annotations)
 
 		for _, obj := range objs {
 			c := corev1.Container{
@@ -75,13 +74,22 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sort.Slice(baseContainers, func(i, j int) bool {
-			return getPPriority(baseContainers[i].Env) > getPPriority(baseContainers[j].Env)
+			return getEnvPPriority(baseContainers[i].Env) > getEnvPPriority(baseContainers[j].Env)
 		})
 
 		for i := range baseContainers {
 			pport := basePort + int32(i)
-			setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
-			addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+
+			if i == len(baseContainers)-1 {
+				print("ADDING TO baseContainer port: " + strconv.Itoa(int(pport)))
+				setEnvVar(baseContainer, basePortTag, strconv.Itoa(int(pport)))
+			} else {
+				setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
+			}
+
+			if addVolume {
+				addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+			}
 
 			if i == 0 {
 				baseContainers[0].Ports = []corev1.ContainerPort{
@@ -96,15 +104,17 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 
 		mDeployment.Spec.Template.Spec.Containers = baseContainers
 
-		mDeployment.Spec.Template.Spec.Volumes = []corev1.Volume{
-			{
-				Name: "shared-data",
-				VolumeSource: corev1.VolumeSource{
-					EmptyDir: &corev1.EmptyDirVolumeSource{
-						Medium: corev1.StorageMedium(config.Get("MEMORY")),
+		if addVolume {
+			mDeployment.Spec.Template.Spec.Volumes = []corev1.Volume{
+				{
+					Name: "shared-volume",
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{
+							Medium: corev1.StorageMedium(config.Get("MEMORY")),
+						},
 					},
 				},
-			},
+			}
 		}
 
 		log.Println(mDeployment.Spec.Template.Spec.Containers)

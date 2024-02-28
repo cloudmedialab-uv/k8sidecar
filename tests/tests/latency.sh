@@ -6,7 +6,7 @@ mkdir -p data/$EXPERIMENT_NAME
 
 
 SECONDS=0
-for archivo in "deploy/filters/"*.tmp 
+for archivo in "deploy/filters-java/"*.tmp 
 do
 
 # SET UP SCENARIO
@@ -30,11 +30,10 @@ for i in $(seq 1 $N_EXPERIMENTS)
 do  
     echo "STARTING REPLICAS Experiment $i"
     bash scripts/send-request.sh "" "" "" 2> /dev/null
-
     sleep 2 
 done
 
-sleep 10
+sleep 20
 
 kubectl delete --kubeconfig $KUBE_CONFIG -f "deploy/functions/function.yml.tmp"
 

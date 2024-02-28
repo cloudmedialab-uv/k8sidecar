@@ -1,0 +1,26 @@
+apiVersion: k8sidecar.io/v1
+kind: Filter
+metadata:
+  name: datamesh
+spec:
+  sidecars:
+    - image: "routerdi1315.uv.es:33443/sidecar/datamesh-sidecar:2.0.8"
+      name: "datamesh1"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh2"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh3"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh4"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh5"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh6"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh7"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh8"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh9"
+    - image: "routerdi1315.uv.es:33443/sidecar/base-java:1.0.2"
+      name: "datamesh10"

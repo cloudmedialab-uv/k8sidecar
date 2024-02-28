@@ -15,12 +15,12 @@ do
     TIMESTAMP=$(date +%s%3N)  
     
     curl -s -X POST $K8S_URL \
-        -H "X-set-response-delay-ms: 2000" \
         -H "Ce-createdtime: $TIMESTAMP" \
         -H 'Content-Type: application/json' \
         -H 'Ce-Type: encoder' \
         -H 'Ce-Specversion: 1.0' \
         -H 'Ce-Source: /HttpEventSource' \
+        -H "X-set-response-delay-ms: $DELAY" \
         -H "Ce-Id: $i" \
         -d "{
     \"ffmpegParams\": \"$FFMPEG_PARAMS\",
@@ -32,7 +32,6 @@ do
     }
     }"
 
-    sleep 0.5
 done
 
 #echo "Todas las peticiones han sido enviadas."

@@ -16,14 +16,14 @@ def getMean(nombre_archivo, multiplicador):
     return medias
 
 
-dir = "../../data/ColdStart_Oncluster/coolstart_oncluster-nogpu_2/"
+dir = "../../data/coolstart/coolstart-go-8/"
 
 # Obtiene la media para cada archivo
-medias_0 = getMean(dir + "0.txt", 4)
-medias_1 = getMean(dir + "1.txt", 4)
-medias_2 = getMean(dir + "2.txt", 4)
-medias_5 = getMean(dir + "5.txt", 4)
-medias_10 = getMean(dir + "10.txt", 4)
+medias_0 = getMean(dir + "0.txt", 8)
+medias_1 = getMean(dir + "1.txt", 8)
+medias_2 = getMean(dir + "2.txt", 8)
+medias_5 = getMean(dir + "5.txt", 8)
+medias_10 = getMean(dir + "10.txt", 8)
 
 datos = [medias_0, medias_1, medias_2, medias_5, medias_10]
 

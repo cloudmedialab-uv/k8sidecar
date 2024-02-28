@@ -51,7 +51,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Parse FILTERS from the environment
 		jsonStr := config.Get("FILTERS")
-		var objs []filterv1.Object
+		var objs []filterv1.Sidecar
 
 		err := json.Unmarshal([]byte(jsonStr), &objs)
 		if err != nil {
@@ -60,18 +60,18 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Initialize a base port with the value 8080.
-		basePort64, err := strconv.ParseInt(knativeService.Annotations["k8sidecar.port"], 10, 32)
-
-		var basePort int32
-		if err != nil {
-			basePort = int32(8080)
-		} else {
-			basePort = int32(basePort64)
-		}
-
 		// Get a deep copy of the current containers from the modified Knative service.
 		baseContainers := mknativeService.Spec.Template.Spec.Containers
+		baseContainer := &baseContainers[len(baseContainers)-1].Env
+		basePortTag, ok := mknativeService.Annotations["k8sidecar.port"]
+		if !ok {
+			basePortTag = "PORT"
+		}
+
+		print("BASE TAG: " + basePortTag)
+		// Initialize a base port with the value 8080.
+		basePort := getEnvPort(*baseContainer, basePortTag)
+		addVolume := getEnvSharedVolume(*baseContainer, mknativeService.Annotations)
 
 		// Loop through each object (which presumably represents desired containers).
 		for _, obj := range objs {
@@ -91,17 +91,24 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Sort the base containers by their priority in descending order.
 		sort.Slice(baseContainers, func(i, j int) bool {
-			return getPPriority(baseContainers[i].Env) > getPPriority(baseContainers[j].Env)
+			return getEnvPPriority(baseContainers[i].Env) > getEnvPPriority(baseContainers[j].Env)
 		})
 
 		// Iterate through each container in the base containers.
 		for i := range baseContainers {
 			// Calculate a dynamic port based on the container's position.
-			pport := basePort + int32(i+1)
+			pport := basePort + int32(i)
 			// Set an environment variable for the calculated port.
-			setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
+			if i == len(baseContainers)-1 {
+				print("ADDING TO baseContainer port: " + strconv.Itoa(int(pport)))
+				setEnvVar(baseContainer, basePortTag, strconv.Itoa(int(pport)))
+			} else {
+				setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))
+			}
 			// Ensure a shared volume exists for this container.
-			addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+			if addVolume {
+				addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+			}
 			// If this is the first container in the list, set its port details.
 			if i == 0 {
 				baseContainers[0].Ports = []corev1.ContainerPort{
@@ -115,17 +122,19 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// Update the modified Knative service's containers with our base containers.
 		mknativeService.Spec.Template.Spec.Containers = baseContainers
-
 		// Set a shared volume to the modified Knative service's volumes.
-		mknativeService.Spec.Template.Spec.Volumes = []corev1.Volume{
-			{
-				Name: "shared-data",
-				VolumeSource: corev1.VolumeSource{
-					EmptyDir: &corev1.EmptyDirVolumeSource{
-						Medium: corev1.StorageMedium(config.Get("MEMORY")),
+		if addVolume {
+
+			mknativeService.Spec.Template.Spec.Volumes = []corev1.Volume{
+				{
+					Name: "shared-volume",
+					VolumeSource: corev1.VolumeSource{
+						EmptyDir: &corev1.EmptyDirVolumeSource{
+							Medium: corev1.StorageMedium(config.Get("MEMORY")),
+						},
 					},
 				},
-			},
+			}
 		}
 
 	}
@@ -169,38 +178,4 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("KserviceHandler completed successfully")
-}
-
-// getPPriority retrieves the priority from the environment variables
-func getPPriority(envs []corev1.EnvVar) int {
-	for _, env := range envs {
-		if env.Name == "PPRIORITY" {
-			value, _ := strconv.Atoi(env.Value)
-			return value
-		}
-	}
-	return -1
-}
-
-// setEnvVar sets or appends a new environment variable
-func setEnvVar(envs *[]corev1.EnvVar, key, value string) {
-	for i, env := range *envs {
-		if env.Name == key {
-			(*envs)[i].Value = value
-			return
-		}
-	}
-
-	*envs = append(*envs, corev1.EnvVar{Name: key, Value: value})
-}
-
-// addVolumeIfNotExist adds a shared volume if it doesn't exist
-func addVolumeIfNotExist(volumes *[]corev1.VolumeMount) {
-	for _, volume := range *volumes {
-		if volume.Name == "shared-data" {
-			return
-		}
-	}
-
-	*volumes = append(*volumes, corev1.VolumeMount{Name: "shared-data", MountPath: "/shared"})
 }

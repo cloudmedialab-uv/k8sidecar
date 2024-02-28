@@ -1,5 +1,5 @@
 # CONFIGURACIÓN KUBECTL MAQUINA MASTER
-export KUBE_CONFIG=/home/tramuntana/.kube/config-cluster-k8s
+export KUBE_CONFIG=/home/tramuntana/.kube/config
 # URL + PUERTO del servidor de subida de video
 export UPLOAD_SERVER_USER=clouduser
 export UPLOAD_SERVER_PRIVATE_KEY=/home/tramuntana/.keys/k8s-ssh-keys

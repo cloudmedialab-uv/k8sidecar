@@ -5,11 +5,11 @@
 mkdir -p data/coolstart/$EXPERIMENT_NAME
 
 FOLDER_SIDECAR=coolstartEncoder
-FILE_FUNCTION=coolstartNOGPU
+FILE_FUNCTION=function
 
 
 SECONDS=0
-for archivo in "deploy/filters/$FOLDER_SIDECAR"/*.tmp 
+for archivo in "deploy/filters-go/"*.tmp
 do
 
 # SET UP SCENARIO
@@ -38,7 +38,7 @@ bash scripts/downscale-replica.sh ffmpeg-fn-v2 > /dev/null
 for i in $(seq 1 $N_EXPERIMENTS) 
 do  
     echo "STARTING REPLICAS Experiment $i"
-    bash scripts/send-request.sh "-i prueba.mkv-c:v libx264 -an p.mp4" "\"$DOWNLOAD_SERVER_URL/prueba.mkv\"" "\"p.mp4\"" 2> /dev/null
+    bash scripts/send-request.sh "" "" "" 2> /dev/null
 
     bash scripts/downscale-replica.sh ffmpeg-fn-v2
 done
@@ -46,10 +46,9 @@ done
 kubectl delete --kubeconfig $KUBE_CONFIG -f "deploy/functions/$FILE_FUNCTION.yml.tmp" 2> /dev/null
 
 kubectl delete --kubeconfig $KUBE_CONFIG -f $archivo
+ GET DATA 
 
-# GET DATA 
-
-python3 scripts/getCoolTime.py times$name.json  data/coolstart/$EXPERIMENT_NAME/$name.txt
+python3 scripts/getColdTime.py times$name.json  data/coolstart/$EXPERIMENT_NAME/$name.txt
 
 done
 

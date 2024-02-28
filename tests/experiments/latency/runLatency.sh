@@ -2,7 +2,6 @@
 
 EXPERIMENTS="latency"
 
-
 source vars/vars.sh
 bash inyection.sh create
 
@@ -16,15 +15,11 @@ do
     source vars/vars.sh
     bash inyection.sh create
 
-    bash scripts/vm-manager.sh up $VMS
-
     bash tests/latency.sh
 
-    sleep 60
+    sleep 5
 
     bash inyection.sh clear
 done
-
-#bash scripts/vm-manager.sh stop $VMS
 
 echo "FINISH EXPERIMENTS"

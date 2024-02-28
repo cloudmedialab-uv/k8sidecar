@@ -26,7 +26,7 @@ def main(data_file_url, output_file):
 
                 # Extraer tsReceivedTime y tsEvenGeneratedTime
                 ts_received_time = data["tsReceivedTime"]
-                ts_even_generated_time = data["tsEvenGeneratedTime"]
+                ts_even_generated_time = data["tsEventGeneratedTime"]
 
                 # Calcular la resta y escribir en el archivo de salida
                 resta = ts_received_time - ts_even_generated_time
@@ -34,6 +34,9 @@ def main(data_file_url, output_file):
 
             except Exception as e:
                 print(f"Error procesando línea: {line}. Error: {e}")
+        
+        out_f.flush()
+        out_f.close()
 
 
 if __name__ == "__main__":

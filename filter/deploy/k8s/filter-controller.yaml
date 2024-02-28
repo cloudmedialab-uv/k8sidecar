@@ -24,6 +24,7 @@ spec:
                         type: string
                       name:
                         type: string
+                        nullable: true
                       priority:
                         type: integer
                         format: int8
@@ -37,6 +38,47 @@ spec:
                               type: string
                             value:
                               type: string
+                              nullable: true
+                            valueFrom:
+                              type: object
+                              nullable: true
+                      volumeMount:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            mountPath:
+                              type: string
+                            readOnly:
+                              type: boolean
+                              nullable: true
+                volumes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      persistentVolumeClaim:
+                        type: object
+                        nullable: true
+                        properties:
+                          claimName:
+                            type: string
+                      configMap:
+                        type: object
+                        nullable: true
+                        properties:
+                          name:
+                            type: string
+                      secret:
+                        type: object
+                        nullable: true
+                        properties:
+                          secretName:
+                            type: string
   scope: Namespaced
   names:
     plural: filters
@@ -94,10 +136,10 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.8.test
+        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.15.test
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.8.test
+            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.15.test
           - name: FILTER_NAMESPACE
             value: filter-namespace
         ports:

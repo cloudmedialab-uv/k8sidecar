@@ -14,7 +14,7 @@ def getLatency(name):
     return times
 
 
-dir = "../../data/latency1/"
+dir = "../../data/latency-go/"
 
 # Obtiene la media para cada archivo
 datos_0 = getLatency(dir + "0.json")
@@ -38,5 +38,5 @@ plt.boxplot(datos)
 plt.xticks(
     [1, 2, 3, 4, 5], ["0 Sidecar", "1 Sidecar", "2 Sidecar", "5 Sidecar", "10 Sidecar"]
 )
-plt.ylabel("Cold Start time (ms)")
+plt.ylabel("Latency time (ms)")
 plt.show()

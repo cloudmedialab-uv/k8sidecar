@@ -1,0 +1,8 @@
+media de datos_0:  8.76
+media de datos_1:  8.97
+media de datos_2:  13.11111111111111
+media de datos_5:  27.8989898989899
+media de datos_10:  52.53061224489796
+diferencia entre 0 y 10 43.77061224489796
+
+62.4MB

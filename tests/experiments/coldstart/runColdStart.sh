@@ -1,7 +1,5 @@
 #!/bin/bash
-EXPERIMENTS="S1GPU S1NOGPU S2GPU S2NOGPU S3GPU S3NOGPU"
-#EXPERIMENTS="S1GPU S1NOGPU"
-
+EXPERIMENTS="coolstart"
 
 source vars/vars.sh
 bash inyection.sh create
@@ -16,13 +14,9 @@ do
     source vars/vars.sh
     bash inyection.sh create
 
-    bash scripts/vm-manager.sh up $VMS
-
     bash tests/coldStart.sh
 
     bash inyection.sh clear
 done
-
-bash scripts/vm-manager.sh stop $VMS
 
 echo "FINISH EXPERIMENTS"
