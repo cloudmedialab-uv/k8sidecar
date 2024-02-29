@@ -80,6 +80,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 				Name:  obj.Name,
 				Image: obj.Image,
 				// Append the object's environment variables with an additional one for priority.
+				VolumeMounts: obj.VolumeMount,
 				Env: append(obj.Env, corev1.EnvVar{
 					Name:  "PPRIORITY",
 					Value: strconv.Itoa(int(obj.Priority)),
@@ -124,17 +125,14 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		mknativeService.Spec.Template.Spec.Containers = baseContainers
 		// Set a shared volume to the modified Knative service's volumes.
 		if addVolume {
-
-			mknativeService.Spec.Template.Spec.Volumes = []corev1.Volume{
-				{
-					Name: "shared-volume",
-					VolumeSource: corev1.VolumeSource{
-						EmptyDir: &corev1.EmptyDirVolumeSource{
-							Medium: corev1.StorageMedium(config.Get("MEMORY")),
-						},
+			mknativeService.Spec.Template.Spec.Volumes = append(mknativeService.Spec.Template.Spec.Volumes, corev1.Volume{
+				Name: "shared-volume",
+				VolumeSource: corev1.VolumeSource{
+					EmptyDir: &corev1.EmptyDirVolumeSource{
+						Medium: corev1.StorageMedium(config.Get("MEMORY")),
 					},
 				},
-			}
+			})
 		}
 
 	}

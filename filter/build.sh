@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TAG="1.9.15.test"
+TAG="1.10.0.test"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
