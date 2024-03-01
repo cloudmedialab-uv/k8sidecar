@@ -63,8 +63,9 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 
 		for _, obj := range objs {
 			c := corev1.Container{
-				Name:  obj.Name,
-				Image: obj.Image,
+				Name:         obj.Name,
+				Image:        obj.Image,
+				VolumeMounts: obj.VolumeMount,
 				Env: append(obj.Env, corev1.EnvVar{
 					Name:  "PPRIORITY",
 					Value: strconv.Itoa(int(obj.Priority)),
@@ -105,19 +106,16 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		mDeployment.Spec.Template.Spec.Containers = baseContainers
 
 		if addVolume {
-			mDeployment.Spec.Template.Spec.Volumes = []corev1.Volume{
-				{
-					Name: "shared-volume",
-					VolumeSource: corev1.VolumeSource{
-						EmptyDir: &corev1.EmptyDirVolumeSource{
-							Medium: corev1.StorageMedium(config.Get("MEMORY")),
-						},
+			mDeployment.Spec.Template.Spec.Volumes = append(mDeployment.Spec.Template.Spec.Volumes, corev1.Volume{
+				Name: "shared-volume",
+				VolumeSource: corev1.VolumeSource{
+					EmptyDir: &corev1.EmptyDirVolumeSource{
+						Medium: corev1.StorageMedium(config.Get("MEMORY")),
 					},
 				},
-			}
+			},
+			)
 		}
-
-		log.Println(mDeployment.Spec.Template.Spec.Containers)
 	}
 
 	patch, err := jsondiff.Compare(deployment, mDeployment)

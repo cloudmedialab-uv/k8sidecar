@@ -23,6 +23,17 @@ import (
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
+// FilterList is a list of Filter resources
+type FilterList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata"`
+
+	Items []Filter `json:"items"`
+}
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 // MyResource is a specification for a MyResource resource
 type Filter struct {
 	metav1.TypeMeta   `json:",inline"`
