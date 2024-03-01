@@ -16,20 +16,23 @@ def getMean(nombre_archivo, multiplicador):
     return medias
 
 
-dir = "../../data/coolstart/coolstart-go-8/"
+dir = "../../data/coolstart/coolstart-java-72/"
 
 # Obtiene la media para cada archivo
-medias_0 = getMean(dir + "0.txt", 8)
-medias_1 = getMean(dir + "1.txt", 8)
-medias_2 = getMean(dir + "2.txt", 8)
-medias_5 = getMean(dir + "5.txt", 8)
-medias_10 = getMean(dir + "10.txt", 8)
+medias_0 = getMean(dir + "0.txt", 72)
+medias_1 = getMean(dir + "1.txt", 72)
+medias_2 = getMean(dir + "2.txt", 72)
+medias_5 = getMean(dir + "5.txt", 72)
+medias_10 = getMean(dir + "10.txt", 72)
 
 datos = [medias_0, medias_1, medias_2, medias_5, medias_10]
 
 plt.boxplot(datos)
+plt.xlabel("Number of sidecars", fontsize=24)
+
 plt.xticks(
-    [1, 2, 3, 4, 5], ["0 Sidecar", "1 Sidecar", "2 Sidecar", "5 Sidecar", "10 Sidecar"]
+    [1, 2, 3, 4, 5], ["0", "1", "2", "5", "10"]
 )
-plt.ylabel("Cold Start time (s)")
+plt.tick_params(axis="x",labelsize=20)
+plt.ylabel("Cold Start time (s)", fontsize=24)
 plt.show()

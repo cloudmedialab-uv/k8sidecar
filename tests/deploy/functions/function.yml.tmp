@@ -33,7 +33,7 @@ spec:
          autoscaling.knative.dev/metric: "concurrency"
          autoscaling.knative.dev/target: "1"
          autoscaling.knative.dev/minScale: "0"
-         autoscaling.knative.dev/maxScale: "24"
+         autoscaling.knative.dev/maxScale: "72"
          autoscaling.knative.dev/target-utilization-percentage: "100"
     spec:
       containerConcurrency: 1

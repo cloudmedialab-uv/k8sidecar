@@ -35,8 +35,10 @@ print("diferencia entre 0 y 10", mean(datos_10)-mean(datos_0))
 
 
 plt.boxplot(datos)
+plt.xlabel("Number of sidecars", fontsize=24)
+plt.tick_params(axis="x",labelsize=20)
 plt.xticks(
-    [1, 2, 3, 4, 5], ["0 Sidecar", "1 Sidecar", "2 Sidecar", "5 Sidecar", "10 Sidecar"]
+    [1, 2, 3, 4, 5], ["0", "1", "2", "5", "10"]
 )
-plt.ylabel("Latency time (ms)")
+plt.ylabel("Latency time (ms)", fontsize=24)
 plt.show()
