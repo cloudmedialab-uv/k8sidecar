@@ -16,7 +16,7 @@ do
 
 kubectl apply --kubeconfig $KUBE_CONFIG -f $archivo
 
-sleep 20
+sleep 5
 
 kubectl apply --kubeconfig $KUBE_CONFIG -f "deploy/functions/$FILE_FUNCTION.yml.tmp"
 
@@ -31,7 +31,7 @@ fi
 
 export TIMES_FILE=times$name.json
 
-sleep 10
+sleep 5
 
 bash scripts/downscale-replica.sh ffmpeg-fn-v2 > /dev/null
 
@@ -46,7 +46,6 @@ done
 kubectl delete --kubeconfig $KUBE_CONFIG -f "deploy/functions/$FILE_FUNCTION.yml.tmp" 2> /dev/null
 
 kubectl delete --kubeconfig $KUBE_CONFIG -f $archivo
- GET DATA 
 
 python3 scripts/getColdTime.py times$name.json  data/coolstart/$EXPERIMENT_NAME/$name.txt
 
