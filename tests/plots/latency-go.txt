@@ -5,4 +5,3 @@ media de datos_5:  11.777777777777779
 media de datos_10:  16.252525252525253
 diferencia entre 0 y 10 7.9393939393939394
 
-17.2MB

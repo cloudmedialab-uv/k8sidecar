@@ -1,0 +1,4 @@
+base-java: 62.4MB
+base-8: 17.2MB
+envoy-knative: 164MB
+echo-image: 125MB

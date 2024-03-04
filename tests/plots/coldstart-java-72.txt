@@ -1,0 +1,6 @@
+media de medias_0:  2.2026952777777775
+media de medias_1:  2.219687777777778
+media de medias_2:  3.0868258333333336
+media de medias_5:  5.474023611111112
+media de medias_10:  13.115805833333336
+diferencia entre 0 y 10 10.913110555555559
