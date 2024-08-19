@@ -60,7 +60,7 @@ These two Docker images will be built for later use.
 If you prefer to use the available precompiled images, simply proceed with the deployment of the CRD, as these images are hosted in the official repository and will be downloaded automatically during deployment.
 
 
-### Deploy the Filter Custom Resource Definition (CRD)
+### 4. Deploy the Filter Custom Resource Definition (CRD)
 
 To deploy this CRD just run:
 
@@ -87,11 +87,10 @@ metadata:
   name: ratelimiter
 spec:
   sidecars:
-    - image: "routerdi1315.uv.es:33443/sidecar/ratelimiter:1.0.0"
+    - image: "cloudmedialab/sidecar-ratelimiter:1.0.0"
       name: "ratelimiter-container"
       priority: 2
 ```
-
 To create this filter in kubernetes, run the following command:
 
 ```bash
@@ -116,10 +115,10 @@ metadata:
   name: logauth
 spec:
   sidecars:
-    - image: "routerdi1315.uv.es:33443/sidecar/logging:1.0.0"
+    - image: "cloudmedialab/sidecar-logging:1.0.0"
       name: "logging-container"
       priority: 1
-    - image: "routerdi1315.uv.es:33443/sidecar/auth:1.0.0"
+    - image: "cloudmedialab/sidecar-auth:1.0.0"
       name: "auth-container"
       priority: 3
       env:
