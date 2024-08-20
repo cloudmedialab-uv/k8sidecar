@@ -6,4 +6,7 @@ spec:
   sidecars:
     - image: "cloudmedialab/sidecar-ratelimiter:1.0.0"
       name: "ratelimiter-container"
+      env:
+        - name: RATE
+          value: "5"
       priority: 2
