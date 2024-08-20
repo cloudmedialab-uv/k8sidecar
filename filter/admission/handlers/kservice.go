@@ -108,7 +108,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			// Ensure a shared volume exists for this container.
 			if addVolume {
-				addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+				addVolumeMountIfNotExist(&baseContainers[i].VolumeMounts)
 			}
 			// If this is the first container in the list, set its port details.
 			if i == 0 {
@@ -124,7 +124,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		// Update the modified Knative service's containers with our base containers.
 		mknativeService.Spec.Template.Spec.Containers = baseContainers
 		// Set a shared volume to the modified Knative service's volumes.
-		if addVolume {
+		if addVolume && !existVolume(mknativeService.Spec.Template.Spec.Volumes) {
 			mknativeService.Spec.Template.Spec.Volumes = append(mknativeService.Spec.Template.Spec.Volumes, corev1.Volume{
 				Name: "shared-volume",
 				VolumeSource: corev1.VolumeSource{

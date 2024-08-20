@@ -70,7 +70,7 @@ func setEnvVar(envs *[]corev1.EnvVar, key, value string) {
 }
 
 // addVolumeIfNotExist adds a shared volume if it doesn't exist
-func addVolumeIfNotExist(volumes *[]corev1.VolumeMount) {
+func addVolumeMountIfNotExist(volumes *[]corev1.VolumeMount) {
 	for _, volume := range *volumes {
 		if volume.Name == "shared-volume" {
 			return
@@ -78,4 +78,13 @@ func addVolumeIfNotExist(volumes *[]corev1.VolumeMount) {
 	}
 
 	*volumes = append(*volumes, corev1.VolumeMount{Name: "shared-volume", MountPath: "/shared"})
+}
+
+func existVolume(volumes []corev1.Volume) bool {
+	for _, volume := range volumes {
+		if volume.Name == "shared-volume" {
+			return true
+		}
+	}
+	return false
 }

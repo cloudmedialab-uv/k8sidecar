@@ -89,7 +89,7 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if addVolume {
-				addVolumeIfNotExist(&baseContainers[i].VolumeMounts)
+				addVolumeMountIfNotExist(&baseContainers[i].VolumeMounts)
 			}
 
 			if i == 0 {
@@ -105,7 +105,7 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 
 		mDeployment.Spec.Template.Spec.Containers = baseContainers
 
-		if addVolume {
+		if addVolume && !existVolume(mDeployment.Spec.Template.Spec.Volumes) {
 			mDeployment.Spec.Template.Spec.Volumes = append(mDeployment.Spec.Template.Spec.Volumes, corev1.Volume{
 				Name: "shared-volume",
 				VolumeSource: corev1.VolumeSource{
