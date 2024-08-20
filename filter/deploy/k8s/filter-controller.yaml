@@ -111,7 +111,7 @@ metadata:
   name: filter-controller-crb
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole  
+  kind: ClusterRole
   name: filter-controller-rol
 subjects:
 - kind: ServiceAccount
@@ -136,10 +136,10 @@ spec:
       serviceAccountName: filter-controller-sa
       containers:
       - name: filter-controller
-        image: routerdi1315.uv.es:33443/sidecar/filter/controller:1.9.15.test
+        image: cloudmedialab/filter-controller:1.0.0
         env:
           - name: ADMISSION_IMAGE
-            value: routerdi1315.uv.es:33443/sidecar/filter/admission:1.9.15.test
+            value: cloudmedialab/filter-admission:1.0.0
           - name: FILTER_NAMESPACE
             value: filter-namespace
         ports:

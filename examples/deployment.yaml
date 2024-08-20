@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   name: echo-deployment
   annotations:
-    k8sidecar.port: "MYPORT"
-  labels: 
+    k8sidecar.port: "PORT"
+  labels:
     logauth: "sidecar" # inject logging and auth sidecars
     ratelimiter: "sidecar" # inject ratelimiter sidecar
 spec:
@@ -21,7 +21,17 @@ spec:
       - name: echo-container
         image: ealen/echo-server:latest
         env:
-        - name: MYPORT
-          value: "8888"
-        ports:
-        - containerPort: 80
+        - name: PORT
+          value: "80"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service
+spec:
+  selector:
+    app: echo
+  ports:
+  - port: 80
+    targetPort: 80

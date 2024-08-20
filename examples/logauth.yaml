@@ -4,10 +4,10 @@ metadata:
   name: logauth
 spec:
   sidecars:
-    - image: "routerdi1315.uv.es:33443/sidecar/logging:1.0.0"
+    - image: "cloudmedialab/sidecar-logging:1.0.0"
       name: "logging-container"
       priority: 1
-    - image: "routerdi1315.uv.es:33443/sidecar/auth:1.0.0"
+    - image: "cloudmedialab/sidecar-authorization:1.0.0"
       name: "auth-container"
       priority: 3
       env:
