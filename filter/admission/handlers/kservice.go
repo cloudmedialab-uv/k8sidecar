@@ -129,7 +129,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 				Name: "shared-volume",
 				VolumeSource: corev1.VolumeSource{
 					EmptyDir: &corev1.EmptyDirVolumeSource{
-						Medium: corev1.StorageMedium(config.Get("MEMORY")),
+						Medium: corev1.StorageMedium(config.Get("MEDIUM")),
 					},
 				},
 			})
