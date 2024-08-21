@@ -196,7 +196,7 @@ kubectl apply -f examples/deployment.yaml
 If everything is configured correctly, you should see the successful deployment messages in your terminal. To verify that the deployment and sidecar injection were successful, you can check the pods' statuses with the following command:
 
 ```bash
-kubectl get pod -n filter-usage
+kubectl get pod
 ```
 
 A successful deployment will show the pod in a Running status with 4 containers, confirming that everything is operating as expected.
@@ -211,17 +211,17 @@ echo-deployment-788dffbb7f-mvqlm   4/4     Running        0          5s
 ### Testing
 We will deploy a pod with `curl` to make HTTP requests:
 ```bash
-kubectl run curl --image=curlimages/curl:8.5.0 --restart=Never --namespace filter-usage --command -- sleep 3600
+kubectl run curl --image=curlimages/curl:8.5.0 --restart=Never --command -- sleep 3600
 ```
 
 We can check that the authentication proxy filters out the requests that do not provide the HTTP header configured in this sidecar:
 ```bash
-kubectl exec curl -n filter-usage -- curl http://echo-service
+kubectl exec curl -- curl http://echo-service
 ```
 
 Check that the authentication proxy passes the request if we provide the HTTP header configured in this sidecar:
 ```bash
-kubectl exec curl -n filter-usage -- curl -H "AUTH_TOKEN: password" http://echo-service
+kubectl exec curl -- curl -H "AUTH_TOKEN: password" http://echo-service
 ```
 
 ### Clean
