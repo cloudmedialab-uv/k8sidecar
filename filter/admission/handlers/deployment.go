@@ -52,7 +52,8 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		baseContainers := mDeployment.Spec.Template.Spec.Containers
-		baseContainer := &baseContainers[len(baseContainers)-1].Env
+		previousAddedLen := len(baseContainers) - 1
+		baseContainer := &baseContainers[previousAddedLen].Env
 		basePortTag, ok := mDeployment.Annotations["k8sidecar.port"]
 		if !ok {
 			basePortTag = "PORT"
@@ -79,10 +80,9 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		for i := range baseContainers {
-			pport := basePort + int32(i)
+			pport := basePort + int32(i) - int32(previousAddedLen)
 
 			if i == len(baseContainers)-1 {
-				print("ADDING TO baseContainer port: " + strconv.Itoa(int(pport)))
 				setEnvVar(baseContainer, basePortTag, strconv.Itoa(int(pport)))
 			} else {
 				setEnvVar(&baseContainers[i].Env, "PPORT", strconv.Itoa(int(pport)))

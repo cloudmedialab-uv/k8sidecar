@@ -62,7 +62,8 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 
 		// Get a deep copy of the current containers from the modified Knative service.
 		baseContainers := mknativeService.Spec.Template.Spec.Containers
-		baseContainer := &baseContainers[len(baseContainers)-1].Env
+		previousAddedLen := len(baseContainers) - 1
+		baseContainer := &baseContainers[previousAddedLen].Env
 		basePortTag, ok := mknativeService.Annotations["k8sidecar.port"]
 		if !ok {
 			basePortTag = "PORT"
@@ -98,7 +99,7 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		// Iterate through each container in the base containers.
 		for i := range baseContainers {
 			// Calculate a dynamic port based on the container's position.
-			pport := basePort + int32(i)
+			pport := basePort + int32(i) - int32(previousAddedLen)
 			// Set an environment variable for the calculated port.
 			if i == len(baseContainers)-1 {
 				print("ADDING TO baseContainer port: " + strconv.Itoa(int(pport)))
