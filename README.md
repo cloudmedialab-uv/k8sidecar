@@ -68,7 +68,7 @@ To deploy this CRD just run:
 bash filter/deploy-crd.sh
 ```
 
-This just will deploy to kubernetes the `filter-controller.yaml` file located in folder `deploy/k8s`.
+This will deploy to kubernetes the resources specified in `filter-controller.yaml` file located in folder `filter/deploy/k8s`.
 
 ## Examples
 
