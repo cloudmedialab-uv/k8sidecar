@@ -65,7 +65,7 @@ If you prefer to use the available precompiled images, simply proceed with the d
 To deploy this CRD just run:
 
 ```bash
-bash deploy-crd.sh
+bash filter/deploy-crd.sh
 ```
 
 This just will deploy to kubernetes the `filter-controller.yaml` file located in folder `deploy/k8s`.
