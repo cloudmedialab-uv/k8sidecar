@@ -104,7 +104,7 @@ kubectl get filter
 
 ### logauth filter
 
-The second example consists of proxy sidecars written with the Java library, which act as authentication and logging requests. References to these sidecars can be found [here for authentication](https://github.com/your-username/auuth-example) and [here for logging](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/logging).
+The second example consists of proxy sidecars written with the Java library, which act as authentication and logging requests. References to these sidecars can be found [here for authentication](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/authentication) and [here for logging](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/logging).
 
 Below is the YAML specification of the filter that uses these two proxy sidecars:
 
