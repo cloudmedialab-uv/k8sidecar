@@ -65,10 +65,10 @@ If you prefer to use the available precompiled images, simply proceed with the d
 To deploy this CRD just run:
 
 ```bash
-bash deploy-crd.sh
+bash filter/deploy-crd.sh
 ```
 
-This just will deploy to kubernetes the `filter-controller.yaml` file located in folder `deploy/k8s`.
+This will deploy to kubernetes the resources specified in `filter-controller.yaml` file located in folder `filter/deploy/k8s`.
 
 ## Examples
 
@@ -104,7 +104,7 @@ kubectl get filter
 
 ### logauth filter
 
-The second example consists of proxy sidecars written with the Java library, which act as authentication and logging requests. References to these sidecars can be found [here for authentication](https://github.com/your-username/auuth-example) and [here for logging](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/logging).
+The second example consists of proxy sidecars written with the Java library, which act as authentication and logging requests. References to these sidecars can be found [here for authentication](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/authentication) and [here for logging](https://github.com/cloudmedialab-uv/k8sidecar-java-lib/tree/main/examples/logging).
 
 Below is the YAML specification of the filter that uses these two proxy sidecars:
 
@@ -196,7 +196,7 @@ kubectl apply -f examples/deployment.yaml
 If everything is configured correctly, you should see the successful deployment messages in your terminal. To verify that the deployment and sidecar injection were successful, you can check the pods' statuses with the following command:
 
 ```bash
-kubectl get pod -n filter-usage
+kubectl get pod
 ```
 
 A successful deployment will show the pod in a Running status with 4 containers, confirming that everything is operating as expected.
@@ -211,17 +211,17 @@ echo-deployment-788dffbb7f-mvqlm   4/4     Running        0          5s
 ### Testing
 We will deploy a pod with `curl` to make HTTP requests:
 ```bash
-kubectl run curl --image=curlimages/curl:8.5.0 --restart=Never --namespace filter-usage --command -- sleep 3600
+kubectl run curl --image=curlimages/curl:8.5.0 --restart=Never --command -- sleep 3600
 ```
 
 We can check that the authentication proxy filters out the requests that do not provide the HTTP header configured in this sidecar:
 ```bash
-kubectl exec curl -n filter-usage -- curl http://echo-service
+kubectl exec curl -- curl http://echo-service
 ```
 
 Check that the authentication proxy passes the request if we provide the HTTP header configured in this sidecar:
 ```bash
-kubectl exec curl -n filter-usage -- curl -H "AUTH_TOKEN: password" http://echo-service
+kubectl exec curl -- curl -H "AUTH_TOKEN: password" http://echo-service
 ```
 
 ### Clean

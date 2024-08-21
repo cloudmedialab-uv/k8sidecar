@@ -7,7 +7,7 @@ spec:
     - image: "cloudmedialab/sidecar-logging:1.0.0"
       name: "logging-container"
       priority: 1
-    - image: "cloudmedialab/sidecar-authorization:1.0.0"
+    - image: "cloudmedialab/sidecar-authentication:1.0.0"
       name: "auth-container"
       priority: 3
       env:
