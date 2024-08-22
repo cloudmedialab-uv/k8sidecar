@@ -239,9 +239,9 @@ kubectl exec curl -- /bin/sh -c 'for i in $(seq 1 10); do printf "\n\nRequest: $
 ### Clean
 
 ```bash
-kubectl delete namespace filter-usage
+kubectl delete echo-deployment
+kubectl delete echo-service
 ```
-
 If you do not need the filters you can delete them:
 ```bash
 kubectl delete logauth
