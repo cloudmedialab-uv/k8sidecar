@@ -214,15 +214,28 @@ We will deploy a pod with `curl` to make HTTP requests:
 kubectl run curl --image=curlimages/curl:8.5.0 --restart=Never --command -- sleep 3600
 ```
 
-We can check that the authentication proxy filters out the requests that do not provide the HTTP header configured in this sidecar:
+We can check that the authentication sidecar proxy filters out the requests that do not provide the HTTP header configured in this sidecar:
 ```bash
 kubectl exec curl -- curl http://echo-service
 ```
 
-Check that the authentication proxy passes the request if we provide the HTTP header configured in this sidecar:
+Check that the authentication sidecar proxy passes the request if we provide the HTTP header configured in this sidecar:
 ```bash
 kubectl exec curl -- curl -H "AUTH_TOKEN: password" http://echo-service
 ```
+
+Check that the ratelimiter sidecar proxy limits the number of requests per second:
+```bash
+kubectl exec curl -- /bin/sh -c 'for i in $(seq 1 20) do; curl -H "AUTH_TOKEN: password" http://echo-service; done'
+```
+We should obtain only 5 responses.
+
+If we slow the rate of requests per second we see that we receive the response for all the requests:
+```bash
+kubectl exec curl -- /bin/sh -c 'for i in $(seq 1 20) do; curl -H "AUTH_TOKEN: password" http://echo-service; sleep 0.3; done'
+```
+
+
 
 ### Clean
 
