@@ -127,8 +127,8 @@ func (in *Sidecar) DeepCopyInto(out *Sidecar) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
-	if in.VolumeMount != nil {
-		in, out := &in.VolumeMount, &out.VolumeMount
+	if in.VolumeMounts != nil {
+		in, out := &in.VolumeMounts, &out.VolumeMounts
 		*out = make([]corev1.VolumeMount, len(*in))
 		for i := range *in {
 			(*in)[i].DeepCopyInto(&(*out)[i])

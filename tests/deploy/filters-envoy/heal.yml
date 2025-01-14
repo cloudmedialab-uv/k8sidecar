@@ -1,0 +1,126 @@
+
+#envoy -c /etc/envoy/envoy.yaml --restart-epoch 1
+static_resources:
+  listeners:
+    - name: local_listener
+      address:
+        socket_address:
+          address: "0.0.0.0"
+          port_value: 8081
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_http
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: backend
+                      domains: ["*"]
+                      routes:
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: local_app
+                http_filters:
+                  # Filtro Health Check #1
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #2
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #3
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #4
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #5
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #6
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #7
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #8
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Health Check #9
+                  - name: envoy.filters.http.health_check
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.health_check.v3.HealthCheck
+                      pass_through_mode: true
+                      headers:
+                        - name: ":path"
+                          exact_match: "/healthz"
+
+                  # Filtro Router #10
+                  - name: envoy.filters.http.router
+                http_protocol_options: {}
+  
+  clusters:
+    - name: local_app
+      connect_timeout: 1s
+      type: STATIC
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: local_app
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: "127.0.0.1"
+                      port_value: 8082
+

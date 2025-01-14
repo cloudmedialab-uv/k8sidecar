@@ -45,11 +45,9 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 
 	mknativeService := knativeService.DeepCopy()
 
-	// Check if the label matches the desired value
 	if knativeService.Labels[config.Get("LABEL_KEY")] == config.Get("LABEL_VALUE") {
 		log.Println("Label match found, preparing to add sidecar container")
 
-		// Parse FILTERS from the environment
 		jsonStr := config.Get("FILTERS")
 		var objs []filterv1.Sidecar
 
@@ -78,10 +76,9 @@ func KserviceHandler(w http.ResponseWriter, r *http.Request) {
 		for _, obj := range objs {
 			// Create a new container using the object's name and image, and append a new environment variable for priority.
 			c := corev1.Container{
-				Name:  obj.Name,
-				Image: obj.Image,
-				// Append the object's environment variables with an additional one for priority.
-				VolumeMounts: obj.VolumeMount,
+				Name:         obj.Name,
+				Image:        obj.Image,
+				VolumeMounts: obj.VolumeMounts,
 				Env: append(obj.Env, corev1.EnvVar{
 					Name:  "PPRIORITY",
 					Value: strconv.Itoa(int(obj.Priority)),

@@ -1,0 +1,207 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envoy-config
+data:
+  envoy.yaml: |
+    static_resources:
+    listeners:
+    - name: local_listener
+      address:
+        socket_address:
+          address: "127.0.0.1"
+          port_value: 8081
+      filter_chains:
+      - filters:
+        - name: envoy.filters.network.http_connection_manager_1
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_1
+            route_config:
+              name: local_route_1
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_2
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_2
+            route_config:
+              name: local_route_2
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_3
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_3
+            route_config:
+              name: local_route_3
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_4
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_4
+            route_config:
+              name: local_route_4
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_5
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_5
+            route_config:
+              name: local_route_5
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_6
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_6
+            route_config:
+              name: local_route_6
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_7
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_7
+            route_config:
+              name: local_route_7
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_8
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_8
+            route_config:
+              name: local_route_8
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_9
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_9
+            route_config:
+              name: local_route_9
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+        - name: envoy.filters.network.http_connection_manager_10
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+            stat_prefix: ingress_http_10
+            route_config:
+              name: local_route_10
+              virtual_hosts:
+              - name: backend
+                domains: ["*"]
+                routes:
+                - match:
+                    prefix: "/"
+                  route:
+                    cluster: local_app
+            http_filters:
+            - name: envoy.filters.http.router
+    clusters:
+    - name: local_app
+      connect_timeout: 0.25s
+      type: STATIC
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: local_app
+        endpoints:
+        - lb_endpoints:
+          - endpoint:
+              address:
+                socket_address:
+                  address: 127.0.0.1
+                  port_value: 8082
+---
+apiVersion: k8sidecar.io/v1
+kind: Filter
+metadata:
+  name: datamesh
+spec:
+  sidecars:
+    - image: "routerdi1315.uv.es:33443/sidecar/datamesh-sidecar:2.0.8"
+      name: "datamesh"
+    - image: "envoyproxy/envoy:v1.18.3"
+      name: "envoy"
+      volumeMounts:
+        - name: "envoy-config-volume"
+          mountPath: /etc/envoy
+  volumes:
+      - name: envoy-config-volume
+        configMap:
+          name: envoy-config

@@ -50,9 +50,9 @@ type FilterSpec struct {
 
 // Object represents a single object in the array
 type Sidecar struct {
-	Image       string               `json:"image"`
-	Name        string               `json:"name,omitempty"`
-	Priority    int8                 `json:"priority,omitempty"`
-	Env         []corev1.EnvVar      `json:"env,omitempty"`
-	VolumeMount []corev1.VolumeMount `json:"volumeMount,omitempty"`
+	Image        string               `json:"image"`
+	Name         string               `json:"name,omitempty"`
+	Priority     int8                 `json:"priority,omitempty"`
+	Env          []corev1.EnvVar      `json:"env,omitempty"`
+	VolumeMounts []corev1.VolumeMount `json:"volumeMount,omitempty"`
 }

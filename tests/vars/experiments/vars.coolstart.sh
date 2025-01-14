@@ -1,5 +1,5 @@
 #NUMERO DE PETICIONES DE CADA PRUEBA
-export N=72
+export N=8
 #Number of Experiments
 export N_EXPERIMENTS=50
 # NOMBRE del fichero de tiempos
@@ -12,7 +12,7 @@ export GPU=false
 export METRICS_FLAG=false
 
 export MIN_REPLICAS=0
-export MAX_REPLICAS=72
+export MAX_REPLICAS=8
 
 export CONCURRENCY=1
 

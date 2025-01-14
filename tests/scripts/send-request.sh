@@ -14,7 +14,7 @@ for i in $(seq 1 $N)
 do
     TIMESTAMP=$(date +%s%3N)  
     
-    curl -s -X POST $K8S_URL \
+    curl -X POST $K8S_URL \
         -H "Ce-createdtime: $TIMESTAMP" \
         -H 'Content-Type: application/json' \
         -H 'Ce-Type: encoder' \

@@ -66,7 +66,7 @@ func DeploymentHandler(w http.ResponseWriter, r *http.Request) {
 			c := corev1.Container{
 				Name:         obj.Name,
 				Image:        obj.Image,
-				VolumeMounts: obj.VolumeMount,
+				VolumeMounts: obj.VolumeMounts,
 				Env: append(obj.Env, corev1.EnvVar{
 					Name:  "PPRIORITY",
 					Value: strconv.Itoa(int(obj.Priority)),

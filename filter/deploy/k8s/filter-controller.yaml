@@ -42,7 +42,30 @@ spec:
                             valueFrom:
                               type: object
                               nullable: true
-                      volumeMount:
+                              properties:
+                                fieldRef:
+                                  type: object
+                                  nullable: true
+                                  properties:
+                                    fieldPath:
+                                      type: string
+                                configMapKeyRef:
+                                  type: object
+                                  nullable: true
+                                  properties:
+                                    name:
+                                      type: string
+                                    key:
+                                      type: string
+                                secretKeyRef:
+                                  type: object
+                                  nullable: true
+                                  properties:
+                                    name:
+                                      type: string
+                                    key:
+                                      type: string
+                      volumeMounts:
                         type: array
                         items:
                           type: object
